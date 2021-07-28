@@ -1,23 +1,64 @@
-# Compiled class file
-*.class
+import java.util.Scanner;
 
-# Log file
-*.log
+public class Romanos {
+    static Scanner s = new Scanner(System.in);
+    public static String toRoman(){
+        String[][] matrixRomanos = new String[][] {
+                {"", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM"},
+                {"", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC"},
+                {"", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"},
+        };
 
-# BlueJ files
-*.ctxt
+        // Bloco responsável por transformar a entrada String em uma coleção Char e Int
+        String entrada = s.nextLine();
+        char[] algarismos = new char[entrada.length()];
+        int[] algarismosInt = new int[entrada.length()];
+        for (int i = 0; i < entrada.length(); i++) {
+            algarismos[i] = entrada.charAt(i);
+            algarismosInt[i] = Character.getNumericValue(algarismos[i]);
+        }
 
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
+        // Bloco responsável pela casa de milhar
+        StringBuilder milhar = new StringBuilder();
+        if (entrada.length() > 3) {
+            int vezes;
+            for (int i = entrada.length() - 3; i > 0; i--) {
+                int pow = (int) Math.pow(10, i - 1);
+                vezes = Integer.parseInt(String.valueOf(algarismos[entrada.length() - 3 - i])) * pow;
+                for (int j = 0; j < vezes; j++) {
+                    milhar.append("M");
+                }
+            }
+        }
 
-# Package Files #
-*.jar
-*.war
-*.nar
-*.ear
-*.zip
-*.tar.gz
-*.rar
+        // Bloco responsável pela casa de centenas, dezenas e unidades
+        StringBuilder romano = new StringBuilder();
+        if(entrada.length() >= 3) {
+            String centena = matrixRomanos[0][algarismosInt[entrada.length()-3]];
+            String dezena = matrixRomanos[1][algarismosInt[entrada.length()-2]];
+            String unidade = matrixRomanos[2][algarismosInt[entrada.length()-1]];
+            romano.append(centena); romano.append(dezena); romano.append(unidade);
+        }else if(entrada.length() == 2) {
+            String dezena = matrixRomanos[1][algarismosInt[0]];
+            String unidade = matrixRomanos[2][algarismosInt[1]];
+            romano.append(dezena); romano.append(unidade);
+        }else if(entrada.length() == 1) {
+            String unidade = matrixRomanos[2][algarismosInt[0]];
+            romano.append(unidade);
+        }
+        return milhar + romano.toString();
+    }
 
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
+    public static void main(String[] args) {
+        System.out.println("Insira a quantidade de números que deseja converter");
+        int quantidadeNumeros = s.nextInt();
+
+        String[] romanosAConverter = new String[quantidadeNumeros + 1];
+        for(int i = 0; i <= quantidadeNumeros; i++){
+            romanosAConverter[i] = toRoman();
+        }
+        for(String numeroRomano: romanosAConverter) {
+            System.out.println(numeroRomano);
+        }
+    }
+}
